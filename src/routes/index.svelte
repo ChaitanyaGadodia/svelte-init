@@ -1,4 +1,37 @@
-<style>
+<script lang="typescript">
+  import { createApolloClient } from "../utils/apolloClient";
+  import { onMount } from "svelte";
+  import gql from "graphql-tag";
+
+  const GET_UNITS = gql`
+    query GET_UNITS($supplyEntityId: ID!) {
+      units(supplyEntityId: $supplyEntityId) {
+        id
+      }
+    }
+  `;
+
+  let units;
+  let loading;
+
+  onMount(async () => {
+    const client = createApolloClient();
+    try {
+      const { data, loading: fetchLoading } = await client.query<{ units: [] }>(
+        {
+          query: GET_UNITS,
+          variables: { supplyEntityId: 739 }
+        }
+      );
+      loading = fetchLoading;
+      units = data && data.units;
+    } catch (e) {
+      throw e;
+    }
+  });
+</script>
+
+<!-- <style>
   h1,
   figure,
   p {
@@ -32,21 +65,16 @@
       font-size: 4em;
     }
   }
-</style>
+</style> -->
 
 <svelte:head>
-  <title>Sapper project template</title>
+  <title>Inventory</title>
 </svelte:head>
 
-<h1>Great success!</h1>
-
-<figure>
-  <img alt="Borat" src="logo-192.png" />
-  <figcaption>HIGH FIVE!</figcaption>
-</figure>
-
-<p>
-  <strong>
-    Try editing this file (src/routes/index.svelte) to test live reloading.
-  </strong>
-</p>
+<div>
+  <select />
+  {#if loading}
+    <div>Loading...</div>
+  {/if}
+  {#if units}{JSON.stringify(units)}{/if}
+</div>
