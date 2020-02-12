@@ -1,5 +1,6 @@
 <script lang="typescript">
   export let segment: string | undefined;
+  $: extra = segment;
 </script>
 
 <style>
