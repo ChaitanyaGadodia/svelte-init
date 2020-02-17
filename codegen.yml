@@ -1,0 +1,17 @@
+overwrite: true #used to overwrite existing file
+
+schema: "https://anoopm.staging.anarock.com:3010/graphql"
+
+documents: "./src/graphql/query.ts"
+
+generates:
+  src/typings/lead/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+    config:
+      skipTypename: true
+      declarationKind: "interface"
+      maybeValue: T | undefined
+      namingConvention:
+        transformUnderscore: true

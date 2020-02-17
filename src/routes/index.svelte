@@ -1,30 +1,23 @@
 <script lang="typescript">
   import { createApolloClient } from "../utils/apolloClient";
   import { onMount } from "svelte";
-  import gql from "graphql-tag";
+  import { GetUnitsQuery } from "../typings/lead/graphql";
+  import { GET_UNITS } from "../graphql/query";
+  import { generateTypologyGroups, generateWingGroups } from "../utils/units";
 
-  const GET_UNITS = gql`
-    query GET_UNITS($supplyEntityId: ID!) {
-      units(supplyEntityId: $supplyEntityId) {
-        id
-      }
-    }
-  `;
-
-  let units;
-  let loading;
+  let units: GetUnitsQuery["units"];
+  let loading = false;
 
   onMount(async () => {
     const client = createApolloClient();
     try {
-      const { data, loading: fetchLoading } = await client.query<{ units: [] }>(
-        {
-          query: GET_UNITS,
-          variables: { supplyEntityId: 739 }
-        }
-      );
-      loading = fetchLoading;
+      loading = true;
+      const { data } = await client.query<GetUnitsQuery>({
+        query: GET_UNITS,
+        variables: { supplyEntityId: 739 }
+      });
       units = data && data.units;
+      loading = false;
     } catch (e) {
       throw e;
     }
@@ -73,8 +66,12 @@
 
 <div>
   <select />
+  <div>Start with a typology</div>
   {#if loading}
     <div>Loading...</div>
   {/if}
-  {#if units}{JSON.stringify(units)}{/if}
+  {#if units}
+    <div>typologies: {JSON.stringify(generateTypologyGroups(units))}</div>
+    <div>wings: {JSON.stringify(generateWingGroups(units))}</div>
+  {/if}
 </div>
