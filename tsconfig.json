@@ -21,7 +21,7 @@
     "strict": true,
     "target": "es2020",
     "types": ["svelte"],
-    "typeRoots": ["./node_modules/@types", "./src/typings/npm"]
+    "typeRoots": ["./node_modules/@types", "./src/typings"]
   },
   "include": ["src/**/*"]
 }

@@ -1,8 +1,5 @@
 <script lang="typescript">
-  // @ts-ignore: https://github.com/UnwrittenFun/svelte-vscode/issues/64
-  import Nav from "../components/Nav.svelte";
 
-  export let segment: string | undefined;
 </script>
 
 <style>
@@ -14,8 +11,6 @@
     box-sizing: border-box;
   }
 </style>
-
-<Nav {segment} />
 
 <main>
   <slot />
