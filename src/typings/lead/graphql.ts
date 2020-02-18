@@ -282,6 +282,7 @@ export interface Query {
   sellableEntities: Array<Configurable>;
   typologies: Array<Typology>;
   typology?: Maybe<Typology>;
+  typologyUnits: Array<Unit>;
   unit?: Maybe<Unit>;
   units: Array<Unit>;
   wing?: Maybe<Wing>;
@@ -309,6 +310,11 @@ export interface QueryTypologiesArgs {
 
 export interface QueryTypologyArgs {
   id: Scalars["ID"];
+}
+
+export interface QueryTypologyUnitsArgs {
+  supplyEntityId: Scalars["ID"];
+  typologyId: Scalars["ID"];
 }
 
 export interface QueryUnitArgs {
@@ -441,7 +447,7 @@ export type GetUnitsQuery = {
           sellableEntity: Pick<Configurable, "id" | "name">;
         }
       >;
-      floor: Pick<Floor, "id"> & {
+      floor: Pick<Floor, "id" | "number"> & {
         wing: Pick<Wing, "id" | "name"> & {
           building: Pick<Building, "id" | "name">;
         };

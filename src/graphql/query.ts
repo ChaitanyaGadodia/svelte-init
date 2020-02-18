@@ -21,6 +21,7 @@ export const GET_UNITS = gql`
       }
       floor {
         id
+        number
         wing {
           id
           name

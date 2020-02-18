@@ -1,47 +1,28 @@
-<script context="module">
-  export async function preload({ query }) {
-    let supplyEntityId;
-    if (
-      query.supplyEntityId &&
-      !Array.isArray(query.supplyEntityId) &&
-      parseInt(query.supplyEntityId, 10).toString(10) === query.supplyEntityId
-    ) {
-      supplyEntityId = parseInt(query.supplyEntityId, 10);
-      return { supplyEntityId };
-    }
-
-    this.error(404, "Please make sure that supplyEntityId is present");
-  }
-</script>
-
 <script lang="typescript">
   import { createApolloClient } from "../utils/apolloClient";
   import { onMount } from "svelte";
+  // @ts-ignore: need help
   import { stores } from "@sapper/app";
   import { GetUnitsQuery } from "../typings/lead/graphql";
   import { GET_UNITS } from "../graphql/query";
-  import { generateTypologyGroups } from "../utils/units";
+  import { generateWingGroups } from "../utils/units";
   // @ts-ignore
   import Tabs from "../components/Tabs.svelte";
   import { formatNumber } from "../utils/formatNumber";
-  interface TypologyGroup {
-    sellableEntityName: string;
-    typologies: TypologyInfo[];
-  }
 
-  interface TypologyInfo {
+  interface WingInfo {
     name: string;
+    floors: number;
     count: number;
     minPrice: number;
-    totalArea: number;
   }
 
-  let typologyGroups: TypologyGroup[];
   let loading = false;
-  let typologies: TypologyInfo[] = [];
+  let wings: WingInfo[];
   const { preloading, page, session } = stores();
+  // @ts-ignore: need help
   const { host, path, params, query } = $page;
-  const { supplyEntityId } = query;
+  const { supplyEntityId, typologyId } = query;
 
   onMount(async () => {
     const client = createApolloClient();
@@ -49,25 +30,28 @@
       loading = true;
       const { data } = await client.query<GetUnitsQuery>({
         query: GET_UNITS,
-        variables: { supplyEntityId }
+        variables: { supplyEntityId, typologyId }
       });
-      typologyGroups = generateTypologyGroups(data.units);
-      typologies = typologyGroups[0].typologies;
+      wings = generateWingGroups(data.units);
       loading = false;
     } catch (e) {
       throw e;
     }
   });
-  const onChange = (selected: string) => {
-    const selectedGroup = typologyGroups.find(
-      group => group.sellableEntityName === selected
-    );
-    typologies = (selectedGroup && selectedGroup.typologies) || [];
-  };
-  const projects = [{ name: "Piramal Bla Bla" }, { name: "Shaporji Bla Bla" }];
 </script>
 
 <style>
+  .top-btn {
+    background: #ffffff;
+    box-shadow: 1px 3px 8px rgba(105, 105, 105, 0.1);
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16px;
+    color: #101721;
+    padding: 12px 15px;
+    display: inline;
+  }
   .heading {
     font-size: 28px;
     line-height: 38px;
@@ -128,68 +112,35 @@
   .count-text-align {
     margin-top: 10px;
   }
-  .select-css {
-    background: #ffffff;
-    box-shadow: 1px 3px 8px rgba(105, 105, 105, 0.1);
-    border-radius: 25px;
-    padding: 12px 15px;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .select-css::-ms-expand {
-    display: none;
-  }
-  .select-css:hover {
-    border-color: #888;
-  }
-  .select-css:focus {
-    border-color: #aaa;
-    box-shadow: 0 0 1px 3px rgba(59, 153, 252, 0.7);
-    box-shadow: 0 0 0 3px -moz-mac-focusring;
-    color: #222;
-    outline: none;
-  }
-  .select-css option {
-    font-weight: normal;
-  }
 </style>
 
 <svelte:head>
-  <title>Inventory: Choose Typology</title>
+  <title>Inventory: Choose Wing</title>
 </svelte:head>
 
 <div>
-  <select class="select-css">
-    {#each projects as project}
-      <option value={project}>{project.name}</option>
-    {/each}
-  </select>
-  <div class="heading">Start with a typology</div>
+  <div class="top-btn">2 BHK Regular</div>
+  <div class="heading">Choose a building</div>
   {#if loading}
     <div>Loading...</div>
   {/if}
-  {#if typologyGroups}
-    <Tabs
-      TABS={typologyGroups.map(group => group.sellableEntityName)}
-      initialTab={typologyGroups.map(group => group.sellableEntityName)[0]}
-      {onChange} />
+  {#if wings}
     <div class="cards-wrap">
-      {#each typologies as typology, i (typology)}
+      {#each wings as wing, i (wing.name)}
         <div class="typology-card">
           <div>
-            <div class="card-heading">{typology.name}</div>
+            <div class="card-heading">{wing.name}</div>
             <div class="card-sub-heading typology-area">
-              {typology.totalArea} ft²
+              {wing.floors} Floors
             </div>
             <div class="card-text">
-              &#8377; {formatNumber(typology.minPrice, 2)} +
+              &#8377; {formatNumber(wing.minPrice, 2)} +
             </div>
           </div>
           <div class="count-wrap">
             <div class="available-count">
-              {typology.count}
-              <span class="count-text">/ {typology.count}</span>
+              {wing.count}
+              <span class="count-text">/ {wing.count}</span>
             </div>
             <div class="count-text count-text-align">units available</div>
           </div>
