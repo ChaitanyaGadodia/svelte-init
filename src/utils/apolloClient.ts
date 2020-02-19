@@ -1,10 +1,12 @@
 // https://frustrated.blog/2019/07/18/sapper-graphql-subscriptions.html
 
 import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
+import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-link-http";
 
-export const createApolloClient = (initialState = {}) => {
+export const createApolloClient = (
+  initialState = {}
+): ApolloClient<NormalizedCacheObject> => {
   const cache = new InMemoryCache({
     // dataIdFromObject: object => object.__typename || "" + object.id // anoop make sure __typename is present
   });

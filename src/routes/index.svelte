@@ -3,7 +3,6 @@
   import { onMount } from "svelte";
   import { GetUnitsQuery } from "../typings/lead/graphql";
   import { GET_UNITS } from "../graphql/query";
-  import { generateTypologyGroups, generateWingGroups } from "../utils/units";
 
   let units: GetUnitsQuery["units"];
   let loading = false;
@@ -19,6 +18,7 @@
       units = data && data.units;
       loading = false;
     } catch (e) {
+      loading = false;
       throw e;
     }
   });
@@ -71,7 +71,6 @@
     <div>Loading...</div>
   {/if}
   {#if units}
-    <div>typologies: {JSON.stringify(generateTypologyGroups(units))}</div>
-    <div>wings: {JSON.stringify(generateWingGroups(units))}</div>
+    <div>{JSON.stringify(units)}</div>
   {/if}
 </div>

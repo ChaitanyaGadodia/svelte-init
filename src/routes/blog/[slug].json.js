@@ -5,7 +5,8 @@ posts.forEach(post => {
   lookup.set(post.slug, JSON.stringify(post));
 });
 
-export function get(req, res, next) {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function get(req, res) {
   // the `slug` parameter is available because
   // this file is called [slug].json.js
   const { slug } = req.params;
@@ -21,8 +22,10 @@ export function get(req, res, next) {
       "Content-Type": "application/json"
     });
 
-    res.end(JSON.stringify({
-      message: "Not found"
-    }));
+    res.end(
+      JSON.stringify({
+        message: "Not found"
+      })
+    );
   }
 }
