@@ -1,4 +1,4 @@
-export function formatNumber(num: number, toFixed: number = 1): string {
+export function formatNumber(num: number, toFixed = 1): string {
   let formattedNum: string;
   if (num >= 10000000) {
     formattedNum = (num / 10000000).toFixed(toFixed) + "Cr";

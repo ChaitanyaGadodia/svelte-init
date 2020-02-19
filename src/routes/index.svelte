@@ -10,7 +10,7 @@
       return { supplyEntityId };
     }
 
-    this.error(404, "Please make sure that supplyEntityId is present");
+    this.error(404, "Please make sure that supplyEntityId is selected");
   }
 </script>
 

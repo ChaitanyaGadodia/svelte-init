@@ -67,7 +67,7 @@
   {/if}
   {#if wing && wing.floors}
     <div class="head-wrap">
-      <a href={``}>
+      <a href={''}>
         <div class="top-btn">2 BHK Regular in Wing A North Tower</div>
       </a>
     </div>

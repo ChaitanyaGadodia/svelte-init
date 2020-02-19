@@ -1,3 +1,30 @@
+<script context="module">
+  export async function preload({ query }) {
+    let supplyEntityId;
+    if (
+      query.supplyEntityId &&
+      !Array.isArray(query.supplyEntityId) &&
+      parseInt(query.supplyEntityId, 10).toString(10) === query.supplyEntityId
+    ) {
+      supplyEntityId = parseInt(query.supplyEntityId, 10);
+      return { supplyEntityId };
+    } else {
+      this.error(404, "Please make sure that supplyEntityId is selected");
+    }
+    let typologyId;
+    if (
+      query.typologyId &&
+      !Array.isArray(query.typologyId) &&
+      parseInt(query.typologyId, 10).toString(10) === query.typologyId
+    ) {
+      typologyId = parseInt(query.typologyId, 10);
+    } else {
+      this.error(404, "Please make sure that typologyId is selected");
+    }
+    return { supplyEntityId, typologyId };
+  }
+</script>
+
 <script lang="typescript">
   import { createApolloClient } from "../utils/apolloClient";
   import { onMount } from "svelte";

@@ -8,7 +8,7 @@ const generateUnitBasePrice = (
     GetTypologyUnitsQuery["typologyUnits"][0],
     "basePrice" | "basePriceStructure" | "typology"
   >
-) => {
+): number => {
   if (unit.basePriceStructure?.name === PER_SQFT) {
     return (unit.basePrice || 0) * (unit.typology?.totalArea || 0);
   }
