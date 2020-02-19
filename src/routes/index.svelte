@@ -149,7 +149,7 @@
   <title>Inventory: Choose Typology</title>
 </svelte:head>
 
-<div>
+<div class="page-wrap">
   <select class="select-css">
     {#each projects as project}
       <option value={project}>{project.name}</option>

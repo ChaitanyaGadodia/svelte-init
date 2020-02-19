@@ -118,7 +118,7 @@
   <title>Inventory: Choose Wing</title>
 </svelte:head>
 
-<div>
+<div class="page-wrap">
   <div class="top-btn">2 BHK Regular</div>
   <div class="heading">Choose a building</div>
   {#if loading}

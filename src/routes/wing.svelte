@@ -32,11 +32,46 @@
   });
 </script>
 
+<style>
+  .loader-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .head-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .top-btn {
+    margin: 20px auto;
+    background: #ffffff;
+    box-shadow: 1px 3px 8px rgba(105, 105, 105, 0.1);
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16px;
+    color: #101721;
+    padding: 12px;
+    display: inline-block;
+  }
+  .white-block {
+    height: 10px;
+    background: #ffffff;
+  }
+</style>
+
 <div>
   {#if loading}
-    <div>Loading...</div>
+    <div class="loader-wrap">Loading...</div>
   {/if}
   {#if wing && wing.floors}
+    <div class="head-wrap">
+      <a href={``}>
+        <div class="top-btn">2 BHK Regular in Wing A North Tower</div>
+      </a>
+    </div>
+    <div class="white-block" />
     <WingTable floors={wing.floors} />
   {/if}
 </div>
