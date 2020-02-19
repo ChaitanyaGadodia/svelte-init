@@ -440,18 +440,44 @@ export type GetUnitsQueryVariables = {
 
 export type GetUnitsQuery = {
   units: Array<
-    Pick<Unit, "id" | "name" | "basePrice"> & {
+    Pick<Unit, "id" | "basePrice"> & {
       basePriceStructure: Maybe<Pick<PriceStructure, "id" | "name">>;
-      typology: Maybe<
-        Pick<Typology, "id" | "name" | "totalArea"> & {
-          sellableEntity: Pick<Configurable, "id" | "name">;
-        }
-      >;
+      typology: Maybe<Pick<Typology, "id" | "name" | "totalArea">>;
+    }
+  >;
+};
+
+export type GetTypologyUnitsQueryVariables = {
+  supplyEntityId: Scalars["ID"];
+  typologyId: Scalars["ID"];
+};
+
+export type GetTypologyUnitsQuery = {
+  typologyUnits: Array<
+    Pick<Unit, "id" | "basePrice"> & {
+      basePriceStructure: Maybe<Pick<PriceStructure, "id" | "name">>;
+      typology: Maybe<Pick<Typology, "id" | "totalArea">>;
       floor: Pick<Floor, "id" | "number"> & {
         wing: Pick<Wing, "id" | "name"> & {
           building: Pick<Building, "id" | "name">;
         };
       };
+    }
+  >;
+};
+
+export type GetWingQueryVariables = {
+  id: Scalars["ID"];
+};
+
+export type GetWingQuery = {
+  wing: Maybe<
+    Pick<Wing, "id"> & {
+      floors: Array<
+        Pick<Floor, "id" | "number" | "isRefuge"> & {
+          units: Array<Pick<Unit, "id" | "name" | "typologyId">>;
+        }
+      >;
     }
   >;
 };

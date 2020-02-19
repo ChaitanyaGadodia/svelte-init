@@ -3,14 +3,13 @@
   import { onMount } from "svelte";
   // @ts-ignore: need help
   import { stores } from "@sapper/app";
-  import { GetUnitsQuery } from "../typings/lead/graphql";
-  import { GET_UNITS } from "../graphql/query";
+  import { GetTypologyUnitsQuery } from "../typings/lead/graphql";
+  import { GET_TYPOLOGY_UNITS } from "../graphql/query";
   import { generateWingGroups } from "../utils/units";
-  // @ts-ignore
-  import Tabs from "../components/Tabs.svelte";
   import { formatNumber } from "../utils/formatNumber";
 
   interface WingInfo {
+    id: string;
     name: string;
     floors: number;
     count: number;
@@ -28,13 +27,14 @@
     const client = createApolloClient();
     try {
       loading = true;
-      const { data } = await client.query<GetUnitsQuery>({
-        query: GET_UNITS,
+      const { data } = await client.query<GetTypologyUnitsQuery>({
+        query: GET_TYPOLOGY_UNITS,
         variables: { supplyEntityId, typologyId }
       });
-      wings = generateWingGroups(data.units);
+      wings = generateWingGroups(data.typologyUnits);
       loading = false;
     } catch (e) {
+      loading = false;
       throw e;
     }
   });
@@ -127,24 +127,26 @@
   {#if wings}
     <div class="cards-wrap">
       {#each wings as wing, i (wing.name)}
-        <div class="typology-card">
-          <div>
-            <div class="card-heading">{wing.name}</div>
-            <div class="card-sub-heading typology-area">
-              {wing.floors} Floors
+        <a href={`/wing?id=${wing.id}`}>
+          <div class="typology-card">
+            <div>
+              <div class="card-heading">{wing.name}</div>
+              <div class="card-sub-heading typology-area">
+                {wing.floors} Floors
+              </div>
+              <div class="card-text">
+                &#8377; {formatNumber(wing.minPrice, 2)} +
+              </div>
             </div>
-            <div class="card-text">
-              &#8377; {formatNumber(wing.minPrice, 2)} +
+            <div class="count-wrap">
+              <div class="available-count">
+                {wing.count}
+                <span class="count-text">/ {wing.count}</span>
+              </div>
+              <div class="count-text count-text-align">units available</div>
             </div>
           </div>
-          <div class="count-wrap">
-            <div class="available-count">
-              {wing.count}
-              <span class="count-text">/ {wing.count}</span>
-            </div>
-            <div class="count-text count-text-align">units available</div>
-          </div>
-        </div>
+        </a>
       {/each}
     </div>
   {/if}

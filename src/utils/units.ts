@@ -1,9 +1,14 @@
-import { GetUnitsQuery } from "../typings/lead/graphql";
+import { GetUnitsQuery, GetTypologyUnitsQuery } from "../typings/lead/graphql";
 import _ from "lodash-es";
 
 const PER_SQFT = "price_per_sqft";
 
-const generateUnitBasePrice = (unit: GetUnitsQuery["units"][0]) => {
+const generateUnitBasePrice = (
+  unit: Pick<
+    GetTypologyUnitsQuery["typologyUnits"][0],
+    "basePrice" | "basePriceStructure" | "typology"
+  >
+) => {
   if (unit.basePriceStructure?.name === PER_SQFT) {
     return (unit.basePrice || 0) * (unit.typology?.totalArea || 0);
   }
@@ -11,6 +16,7 @@ const generateUnitBasePrice = (unit: GetUnitsQuery["units"][0]) => {
 };
 
 interface WingInfo {
+  id: string;
   name: string;
   floors: number;
   count: number;
@@ -18,7 +24,7 @@ interface WingInfo {
 }
 
 export const generateWingGroups = (
-  units: GetUnitsQuery["units"]
+  units: GetTypologyUnitsQuery["typologyUnits"]
 ): WingInfo[] => {
   const groups = _.entries(
     _.groupBy(
@@ -36,6 +42,7 @@ export const generateWingGroups = (
       }
     });
     return {
+      id: groupUnit.floor.wing.id,
       name: `${groupUnit.floor.wing.building.name} - ${groupUnit.floor.wing.name}`,
       floors: groupUnit.floor.number,
       count: group[1].length,
@@ -45,12 +52,8 @@ export const generateWingGroups = (
   return result;
 };
 
-interface TypologyGroup {
-  sellableEntityName: string;
-  typologies: TypologyInfo[];
-}
-
 interface TypologyInfo {
+  id?: string;
   name: string;
   count: number;
   minPrice: number;
@@ -59,31 +62,23 @@ interface TypologyInfo {
 
 export const generateTypologyGroups = (
   units: GetUnitsQuery["units"]
-): TypologyGroup[] => {
-  const groups = _.entries(
-    _.groupBy(units, unit => unit.typology?.sellableEntity.name)
-  );
+): TypologyInfo[] => {
+  const groups = _.entries(_.groupBy(units, unit => unit.typology?.id));
   const result = groups.map(group => {
-    const typologyGroups = _.entries(
-      _.groupBy(group[1], unit => unit.typology?.id)
-    );
+    const groupUnit = group[1][0];
+    let minPrice = generateUnitBasePrice(groupUnit);
+    group[1].map(unit => {
+      const price = generateUnitBasePrice(unit);
+      if (price < minPrice) {
+        minPrice = price;
+      }
+    });
     return {
-      sellableEntityName: group[0],
-      typologies: typologyGroups.map(typologyGroup => {
-        let minPrice = generateUnitBasePrice(typologyGroup[1][0]);
-        typologyGroup[1].map(unit => {
-          const price = generateUnitBasePrice(unit);
-          if (price < minPrice) {
-            minPrice = price;
-          }
-        });
-        return {
-          name: typologyGroup[1][0].typology?.name || "",
-          count: typologyGroup[1].length,
-          minPrice,
-          totalArea: typologyGroup[1][0].typology?.totalArea || 0
-        };
-      })
+      id: groupUnit.typology?.id,
+      name: groupUnit.typology?.name || "-",
+      count: group[1].length,
+      minPrice,
+      totalArea: groupUnit.typology?.totalArea || 0
     };
   });
   return result;

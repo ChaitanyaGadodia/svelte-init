@@ -17,29 +17,25 @@
 <script lang="typescript">
   import { createApolloClient } from "../utils/apolloClient";
   import { onMount } from "svelte";
+  // @ts-ignore: need help
   import { stores } from "@sapper/app";
   import { GetUnitsQuery } from "../typings/lead/graphql";
   import { GET_UNITS } from "../graphql/query";
   import { generateTypologyGroups } from "../utils/units";
-  // @ts-ignore
-  import Tabs from "../components/Tabs.svelte";
   import { formatNumber } from "../utils/formatNumber";
-  interface TypologyGroup {
-    sellableEntityName: string;
-    typologies: TypologyInfo[];
-  }
 
   interface TypologyInfo {
+    id?: string;
     name: string;
     count: number;
     minPrice: number;
     totalArea: number;
   }
 
-  let typologyGroups: TypologyGroup[];
   let loading = false;
   let typologies: TypologyInfo[] = [];
-  const { preloading, page, session } = stores();
+  const { page } = stores();
+  // @ts-ignore: need help
   const { host, path, params, query } = $page;
   const { supplyEntityId } = query;
 
@@ -51,19 +47,13 @@
         query: GET_UNITS,
         variables: { supplyEntityId }
       });
-      typologyGroups = generateTypologyGroups(data.units);
-      typologies = typologyGroups[0].typologies;
+      typologies = generateTypologyGroups(data.units);
       loading = false;
     } catch (e) {
+      loading = false;
       throw e;
     }
   });
-  const onChange = (selected: string) => {
-    const selectedGroup = typologyGroups.find(
-      group => group.sellableEntityName === selected
-    );
-    typologies = (selectedGroup && selectedGroup.typologies) || [];
-  };
   const projects = [{ name: "Piramal Bla Bla" }, { name: "Shaporji Bla Bla" }];
 </script>
 
@@ -169,31 +159,30 @@
   {#if loading}
     <div>Loading...</div>
   {/if}
-  {#if typologyGroups}
-    <Tabs
-      TABS={typologyGroups.map(group => group.sellableEntityName)}
-      initialTab={typologyGroups.map(group => group.sellableEntityName)[0]}
-      {onChange} />
+  {#if typologies}
     <div class="cards-wrap">
       {#each typologies as typology, i (typology)}
-        <div class="typology-card">
-          <div>
-            <div class="card-heading">{typology.name}</div>
-            <div class="card-sub-heading typology-area">
-              {typology.totalArea} ft²
+        <a
+          href={`/building?supplyEntityId=${supplyEntityId}&typologyId=${typology.id}`}>
+          <div class="typology-card">
+            <div>
+              <div class="card-heading">{typology.name}</div>
+              <div class="card-sub-heading typology-area">
+                {typology.totalArea} ft²
+              </div>
+              <div class="card-text">
+                &#8377; {formatNumber(typology.minPrice, 2)} +
+              </div>
             </div>
-            <div class="card-text">
-              &#8377; {formatNumber(typology.minPrice, 2)} +
+            <div class="count-wrap">
+              <div class="available-count">
+                {typology.count}
+                <span class="count-text">/ {typology.count}</span>
+              </div>
+              <div class="count-text count-text-align">units available</div>
             </div>
           </div>
-          <div class="count-wrap">
-            <div class="available-count">
-              {typology.count}
-              <span class="count-text">/ {typology.count}</span>
-            </div>
-            <div class="count-text count-text-align">units available</div>
-          </div>
-        </div>
+        </a>
       {/each}
     </div>
   {/if}
