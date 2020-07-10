@@ -1,11 +1,11 @@
 overwrite: true #used to overwrite existing file
 
-schema: "https://anoopm.staging.anarock.com:3010/graphql"
+schema: "https://countries.trevorblades.com/graphql"
 
 documents: "./src/graphql/query.ts"
 
 generates:
-  src/typings/lead/graphql.ts:
+  src/typings/graphql.ts:
     plugins:
       - "typescript"
       - "typescript-operations"

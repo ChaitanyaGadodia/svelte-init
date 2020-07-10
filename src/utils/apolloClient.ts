@@ -8,10 +8,10 @@ export const createApolloClient = (
   initialState = {}
 ): ApolloClient<NormalizedCacheObject> => {
   const cache = new InMemoryCache({
-    // dataIdFromObject: object => object.__typename || "" + object.id // anoop make sure __typename is present
+    // dataIdFromObject: object => object.__typename || "" + object.id // make sure __typename is present
   });
   const httpLink = new HttpLink({
-    uri: "https://anoopm.staging.anarock.com:3010/graphql", // `${process.env.LEAD_URL}/graphql`,
+    uri: "https://countries.trevorblades.com/graphql",
     credentials: "include"
   });
   const client = new ApolloClient({

@@ -1,21 +1,20 @@
 <script lang="typescript">
   import { createApolloClient } from "../utils/apolloClient";
   import { onMount } from "svelte";
-  import { GetUnitsQuery } from "../typings/lead/graphql";
-  import { GET_UNITS } from "../graphql/query";
+  import { GetCountriesQuery } from "../typings/graphql";
+  import { GET_COUNTRIES } from "../graphql/query";
 
-  let units: GetUnitsQuery["units"];
+  let countries: GetCountriesQuery["countries"] = [];
   let loading = false;
 
   onMount(async () => {
     const client = createApolloClient();
     try {
       loading = true;
-      const { data } = await client.query<GetUnitsQuery>({
-        query: GET_UNITS,
-        variables: { supplyEntityId: 739 }
+      const { data } = await client.query<GetCountriesQuery>({
+        query: GET_COUNTRIES
       });
-      units = data && data.units;
+      countries = data && data.countries;
       loading = false;
     } catch (e) {
       loading = false;
@@ -24,53 +23,20 @@
   });
 </script>
 
-<!-- <style>
-  h1,
-  figure,
-  p {
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  h1 {
-    font-size: 2.8em;
-    text-transform: uppercase;
-    font-weight: 700;
-    margin: 0 0 0.5em 0;
-  }
-
-  figure {
-    margin: 0 0 1em 0;
-  }
-
-  img {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 0 1em 0;
-  }
-
-  p {
-    margin: 1em auto;
-  }
-
-  @media (min-width: 480px) {
-    h1 {
-      font-size: 4em;
-    }
-  }
-</style> -->
-
 <svelte:head>
-  <title>Inventory</title>
+  <title>Countries</title>
 </svelte:head>
 
 <div>
-  <select />
-  <div>Start with a typology</div>
+  <div>List of countries</div>
   {#if loading}
     <div>Loading...</div>
   {/if}
-  {#if units}
-    <div>{JSON.stringify(units)}</div>
+  {#if countries}
+    <ul>
+      {#each countries as country}
+        <li>{country.code}</li>
+      {/each}
+    </ul>
   {/if}
 </div>

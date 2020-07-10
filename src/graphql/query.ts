@@ -1,35 +1,22 @@
 import gql from "graphql-tag";
 
-export const GET_UNITS = gql`
-  query GET_UNITS($supplyEntityId: ID!) {
-    units(supplyEntityId: $supplyEntityId) {
-      id
+export const GET_COUNTRY = gql`
+  query GET_COUNTRY($code: ID!) {
+    country(code: $code) {
+      code
       name
-      basePrice
-      basePriceStructure {
-        id
-        name
+      languages {
+        native
       }
-      typology {
-        id
-        name
-        totalArea
-        sellableEntity {
-          id
-          name
-        }
-      }
-      floor {
-        id
-        wing {
-          id
-          name
-          building {
-            id
-            name
-          }
-        }
-      }
+      currency
+    }
+  }
+`;
+
+export const GET_COUNTRIES = gql`
+  query GET_COUNTRIES {
+    countries {
+      code
     }
   }
 `;
