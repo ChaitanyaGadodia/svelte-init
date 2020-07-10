@@ -6,7 +6,6 @@ export interface Scalars {
   Boolean: boolean;
   Int: number;
   Float: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Upload: any;
 }
 
@@ -118,4 +117,6 @@ export type GetCountryQuery = {
 
 export type GetCountriesQueryVariables = {};
 
-export type GetCountriesQuery = { countries: Array<Pick<Country, "code">> };
+export type GetCountriesQuery = {
+  countries: Array<Pick<Country, "code" | "name">>;
+};

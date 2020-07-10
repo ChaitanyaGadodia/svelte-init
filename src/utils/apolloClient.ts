@@ -11,8 +11,8 @@ export const createApolloClient = (
     // dataIdFromObject: object => object.__typename || "" + object.id // make sure __typename is present
   });
   const httpLink = new HttpLink({
-    uri: "https://countries.trevorblades.com/graphql",
-    credentials: "include"
+    uri: "https://countries.trevorblades.com/graphql"
+    // credentials: "include"
   });
   const client = new ApolloClient({
     cache: cache.restore(initialState),

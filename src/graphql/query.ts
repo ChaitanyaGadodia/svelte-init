@@ -17,6 +17,7 @@ export const GET_COUNTRIES = gql`
   query GET_COUNTRIES {
     countries {
       code
+      name
     }
   }
 `;

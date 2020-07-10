@@ -35,7 +35,7 @@
   {#if countries}
     <ul>
       {#each countries as country}
-        <li>{country.code}</li>
+        <li>{country.name} - {country.code}</li>
       {/each}
     </ul>
   {/if}

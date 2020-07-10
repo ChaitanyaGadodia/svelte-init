@@ -1,8 +1,5 @@
 <script lang="typescript">
   export let segment: string | undefined;
-  // https://github.com/pyoner/svelte-typescript/issues/22
-  let extra: string | undefined;
-  $: extra = segment;
 </script>
 
 <style>
@@ -66,5 +63,4 @@
       <a rel="prefetch" class:selected={segment === 'blog'} href="blog">blog</a>
     </li>
   </ul>
-  Extra: {extra}
 </nav>
